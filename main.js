@@ -36,3 +36,19 @@ $$('.tgall').forEach(b=>b.onclick=()=>{const ds=$$('details.pt',b.parentElement)
 const lb=document.createElement('div');lb.id='lb';lb.innerHTML='<img alt="">';document.body.appendChild(lb);
 document.addEventListener('click',e=>{const i=e.target.closest('.fg img');if(i){$('img',lb).src=i.src;lb.classList.add('on')}else if(lb.contains(e.target))lb.classList.remove('on')});
 addEventListener('keydown',e=>{if(e.key=='Escape')lb.classList.remove('on')});
+(function(){const A=new Audio('music/aruarian-dance.mp3');A.loop=true;A.preload='auto';
+const g=k=>{try{return localStorage.getItem(k)}catch(e){return null}},st=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+let vol=g('mv')!==null?+g('mv'):40,want=g('mo')!=='0';A.volume=vol/100;
+const mus=$('.mus'),mp=$('#mp'),rg=$('#mr'),pc=$('#mpc');rg.value=vol;pc.textContent=vol+'%';
+const ui=p=>{mp.classList.toggle('on',p);mp.setAttribute('aria-pressed',p);mp.setAttribute('aria-label',p?'Выключить музыку':'Включить музыку');mus.classList.toggle('hint',!p&&want)};
+const kick=e=>{if(want&&A.paused&&!(e.target.closest&&e.target.closest('#mp')))play()};
+const ev=['pointerdown','keydown','touchend'];
+function play(){A.play().then(()=>{ui(true);ev.forEach(x=>removeEventListener(x,kick))}).catch(()=>ui(false))}
+A.addEventListener('loadedmetadata',()=>{const t=+g('mt');if(t>0&&t<A.duration-1)A.currentTime=t});
+ev.forEach(x=>addEventListener(x,kick));
+mp.onclick=()=>{if(A.paused){want=true;st('mo','1');play()}else{A.pause();want=false;st('mo','0');ui(false)}};
+rg.oninput=()=>{vol=+rg.value;A.volume=vol/100;pc.textContent=vol+'%';st('mv',vol)};
+$('#mvb').onclick=e=>{const o=mus.classList.toggle('open');e.currentTarget.setAttribute('aria-expanded',o)};
+document.addEventListener('click',e=>{if(!mus.contains(e.target)){mus.classList.remove('open');$('#mvb').setAttribute('aria-expanded',false)}});
+setInterval(()=>{if(!A.paused)st('mt',A.currentTime)},500);addEventListener('pagehide',()=>st('mt',A.currentTime));
+if(want)play();else ui(false)})();
