@@ -1,2 +1,1 @@
-# monahiyufu
-by akishira
+прив жопа
